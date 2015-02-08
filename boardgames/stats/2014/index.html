@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Koser Board Game Stats - 2014</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/chartist.min.css">
+        <style>
+            html {
+                background-color: #453d3f;
+                color: #f7f2ea;
+                font-size: 30px;
+                line-height: 1.3;
+            }
+            
+            body {
+                max-width: 30em;
+            }
+            
+            a {
+                color: #fd3438;
+            }
+            
+            p {
+                max-width: 20em;
+            }
+            
+            .ct-chart {
+                background-color: #eadbc4;
+                margin: 1.5em 0 .5em 0;
+            }
+            
+            .ct-wide-bar .ct-bar {
+              stroke-width: 30px;
+            }
+
+            .header {
+                font-weight: bold;
+            }
+            .summary-table td {
+                width: 14em;
+            }
+        </style>
+        
+        <!--[if lt IE 9]>
+            <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
+        <![endif]-->
+        
+        <script src="/js/vendor/jquery-2.1.3.min.js"></script>
+        <script src="/js/vendor/chartist.js"></script>
+        <script src="/js/vendor/HumanizeDuration.js"></script>
+        <script>
+            function getAllSupportedItems( ) {
+                return $.getJSON("games2014.json").then(function (data) {
+                    return data;
+                });
+            }
+            
+            window.onload = function() {
+                getAllSupportedItems().done(function (data) {
+                    $('#total-played').html(data['total-played']);
+                    var milliseconds_played = data['minutes-played'] * 60 * 1000;
+                    var milliseconds_played_per_week = milliseconds_played / 44;
+                    milliseconds_played_per_week = 
+                        Math.floor(milliseconds_played_per_week - (milliseconds_played_per_week % (60 * 1000)));
+                    $('#time-spent').html(
+                        humanizeDuration(milliseconds_played, { units: ["hours", "minutes"] }) +
+                        ' (' + humanizeDuration(milliseconds_played_per_week, { units: ["hours", "minutes"] }) + ' per week)'
+                    );
+                    $('#hindex').html(data['hindex']);
+                    
+                    var longest = data['longest'];
+                    var longest_milliseconds_played = longest['Duration'] * 60 * 1000;
+                    var longest_string = longest['Name'] + '; ' + humanizeDuration(longest_milliseconds_played);
+                    $('#longest').html(longest_string);
+                    
+                    var shortest = data['shortest'];
+                    var shortest_milliseconds_played = shortest['Duration'] * 60 * 1000;
+                    var shortest_string = shortest['Name'] + '; ' + humanizeDuration(shortest_milliseconds_played);
+                    $('#shortest').html(shortest_string);
+                    
+                    new Chartist.Bar('.ct-played-by-month', data['played-by-month']);
+                    new Chartist.Bar('.ct-played-by-day', data['played-by-day']);
+                    new Chartist.Bar('.ct-played-by-player-count', data['played-by-player-count']);
+                    new Chartist.Bar('.ct-listed-by-total-played', data['listed-by-total-played']);
+                    new Chartist.Bar('.ct-listed-by-minutes', data['listed-by-minutes']);
+                });
+            };
+        </script>
+    </head>
+    <body>
+
+        <div class="header-container">
+            <header class="wrapper clearfix">
+                <h1 class="title">Koser Board Game Stats - 2014</h1>
+                <!-- <nav>
+                    <ul>
+                        <li><a href="#">nav ul li a</a></li>
+                        <li><a href="#">nav ul li a</a></li>
+                        <li><a href="#">nav ul li a</a></li>
+                    </ul>
+                </nav> -->
+            </header>
+        </div>
+
+        <div class="main-container">
+            <div class="main wrapper clearfix">
+                <p>Brian didn’t start tracking our games played until March, so no data exists for January and February. Also, all but a few of the games were played by both Brian and Melissa.</p>
+                
+                <table class="summary-table">
+                    <tr>
+                        <td class="header">Total Games Played</td>
+                        <td id="total-played"></td>
+                    </tr>
+                    <tr>
+                        <td class="header">Time Spent Playing Games</td>
+                        <td id="time-spent"></td>
+                    </tr>
+                    <tr>
+                        <td class="header">Longest Game</td>
+                        <td id="longest"></td>
+                    </tr>
+                    <tr>
+                        <td class="header">Shortest Game</td>
+                        <td id="shortest"></td>
+                    </tr>
+                </table>
+                
+                <div class="ct-played-by-month ct-chart ct-golden-section ct-wide-bar"></div>
+                <div>Games Played by Month</div>
+                
+                <div class="ct-played-by-day ct-chart ct-golden-section ct-wide-bar"></div>
+                <div>Games Played by Day of the Week</div>
+                
+                <div class="ct-played-by-player-count ct-chart ct-golden-section ct-wide-bar"></div>
+                <div>Games Played by Number of Players</div>
+                
+                <!--<div class="ct-listed-by-total-played ct-chart ct-golden-section"></div>
+                <div>Games by Number of Times Played</div>-->
+                
+                <!--<div class="ct-listed-by-minutes ct-chart ct-golden-section"></div>
+                <div>Games by Total Minutes Played</div>-->
+                
+                <!-- graph: games Brian won by % (min. 2 games played) -->
+                
+                <!-- graph: games Melissa won by % (min. 2 games played) -->
+                
+                <h2>Brian’s Top 10</h2>
+                <ol>
+                    <li>Cosmic Encounter
+                    <li>Agricola
+                    <li>Dungeon Petz
+                    <li>Seasons
+                    <li>The Resistance
+                    <li>Ticket to Ride
+                    <li>Pandemic
+                    <li>Archipelago
+                    <li>Trains
+                    <li>Balderdash
+                </ol>
+                
+                <h2>Melissa’s Top 10</h2>
+                <ol>
+                    <li>1
+                    <li>2
+                    <li>3
+                    <li>4
+                    <li>5
+                    <li>6
+                    <li>7
+                    <li>8
+                    <li>9
+                    <li>10
+                </ol>
+                
+                <h2>h‐index</h2>
+                <p>Our h-index is <span id="hindex"></span>.</p>
+                <p>There are gamers who only play two or three games a lot; others play a lot of different games only once or twice; some play many different games many times. One way to easily spot those gamers is calculating their <a href="http://en.wikipedia.org/wiki/H-index">h-index</a>: a higher index will mean people who play many games many times. For more information and to see how h-index is calculated, see <a href="boardgamegeek.com/thread/953084/whats-your-h-index">this BoardGameGeek post</a>.
+                </p>
+                
+                <!-- New games played in 2014 -->
+                
+            </div> <!-- #main -->
+        </div> <!-- #main-container -->
+
+        <div class="footer-container">
+            <footer class="wrapper">
+                <h3>Built by <a href="briankoser.com">Brian Koser</a></h3>
+            </footer>
+        </div>
+
+        <script src="/js/main.js"></script>
+    </body>
+</html>
