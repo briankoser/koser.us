@@ -517,8 +517,8 @@ hr {
 
     nav a {
         float: left;
-        width: 27%;
         margin-bottom: 0;
+        padding-left: 30px;
     }
 
     nav li:first-child a {
